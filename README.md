@@ -88,3 +88,12 @@ def idft(frequency_signal): #transforms signal back to time domain
 - show the results of the Discrete Fourier Transform (DFT) when the signal is in the frequency domain.
 
 ---
+
+**You can create a .wav file using wav.py code.**
+
+For running the program, you need to install these python libraries: 
+- numpy
+- scipy
+- matplotlib
+- ffmpeg
+- sounddevice
