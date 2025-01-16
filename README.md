@@ -1,5 +1,5 @@
 
-## *Voice Classification System**
+## *Voice Classification System*
 
 ### **Overview**
 
