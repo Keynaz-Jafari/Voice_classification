@@ -134,51 +134,56 @@ def classify_voice(energy_value, avg_energy_male, avg_energy_female):
         return "Female"
 
 ###############################################################################
-
 if __name__ == "__main__":
 
-    male_file_path = "/Users/keinaz/PycharmProjects/signalProject/baba"
-    female_file_path = "/Users/keinaz/PycharmProjects/signalProject/keinaz"
+    # File paths for male and female samples
+    male_file_paths = [
+        "/Users/keinaz/PycharmProjects/signalProject/baba",
+        "/Users/keinaz/PycharmProjects/signalProject/amirali",
+        "/Users/keinaz/PycharmProjects/signalProject/ilya",
+        "/Users/keinaz/PycharmProjects/signalProject/salar",
+        "/Users/keinaz/PycharmProjects/signalProject/sina",
+    ]
 
-    male_signal, male_time, male_sr = get_discrete_signal(male_file_path)
+    female_file_paths = [
+        "/Users/keinaz/PycharmProjects/signalProject/keinaz",
+        "/Users/keinaz/PycharmProjects/signalProject/kiana",
+        "/Users/keinaz/PycharmProjects/signalProject/melika",
+        "/Users/keinaz/PycharmProjects/signalProject/siranoosh",
+        "/Users/keinaz/PycharmProjects/signalProject/maral",
+    ]
 
-    female_signal, female_time, female_sr = get_discrete_signal(female_file_path)
+    # Load signals and compute filtered energy for each sample
+    male_energies = []
+    for file_path in male_file_paths:
+        signal, time_values, sr = get_discrete_signal(file_path)
+        filtered_signal = filter_signal_frequency_domain(signal, sr, low_freq=50, high_freq=5000)
+        male_energies.append(compute_energy(filtered_signal))
 
-    # 2) Filter Signals (Remove Noise outside 50-5000 Hz)
+    female_energies = []
+    for file_path in female_file_paths:
+        signal, time_values, sr = get_discrete_signal(file_path)
+        filtered_signal = filter_signal_frequency_domain(signal, sr, low_freq=50, high_freq=5000)
+        female_energies.append(compute_energy(filtered_signal))
 
-    male_filtered = filter_signal_frequency_domain(male_signal, male_sr, low_freq=50, high_freq=5000)
-    female_filtered = filter_signal_frequency_domain(female_signal, female_sr, low_freq=50, high_freq=5000)
+    # Compute average energies
+    avg_energy_male = np.mean(male_energies)
+    avg_energy_female = np.mean(female_energies)
 
-    # 3) Compute Energies
+    print(f"Average Male Energy: {avg_energy_male}")
+    print(f"Average Female Energy: {avg_energy_female}")
 
-    male_energy = compute_energy(male_filtered)
-    female_energy = compute_energy(female_filtered)
-
-    # For a more robust scenario with multiple samples:
-    #   avg_energy_male = average(energies_of_multiple_male_files)
-    #   avg_energy_female = average(energies_of_multiple_female_files)
-    # Here, we just use single-file energies for demonstration.
-    avg_energy_male = male_energy
-    avg_energy_female = female_energy
-
-    print(f"Reference Male Energy: {avg_energy_male}")
-    print(f"Reference Female Energy: {avg_energy_female}")
-
-    # 4) Classify a New Voice Recording
-
-    new_file_path = "/Users/keinaz/PycharmProjects/signalProject/nameeeee"
+    # Classify a new voice recording
+    new_file_path = "/Users/keinaz/PycharmProjects/signalProject/salar"
     new_signal, new_time, new_sr = get_discrete_signal(new_file_path)
-
     new_filtered = filter_signal_frequency_domain(new_signal, new_sr, low_freq=50, high_freq=5000)
-
     new_energy = compute_energy(new_filtered)
+
     print(f"New Signal Energy: {new_energy}")
 
     # Classify based on which reference energy is closer
     result = classify_voice(new_energy, avg_energy_male, avg_energy_female)
-
     print(f"Classification Result: {result}")
-
 
     # Visualization for the input signal to classify
 
